@@ -3,15 +3,11 @@ import {
   Mith,
   serveStatic,
   resolve,
-  mithCors,
-  Request,
-  Response,
-  NextFunction
+  mithCors
 } from './deps.ts'
 import { rootRouter } from './routes/root.ts'
 import { apiLogger } from './apiLogger.ts'
 
-const { env } = Deno
 const logger = debug('template:server')
 
 const app = new Mith()
