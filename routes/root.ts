@@ -6,24 +6,27 @@ const rootRouter = new Router()
 rootRouter.use(
   'GET',
   '/user/:id',
-  (req, res) => {
+  (req, res, next) => {
     res.body = userController.getUserById(req.params.id)
+    next()
   }
 )
 
 rootRouter.use(
   'GET',
   '/users',
-  (req, res) => {
+  (req, res, next) => {
     res.body = userController.getUsers()
+    next()
   }
 )
 
 rootRouter.use(
   'GET',
   '/',
-  (req, res) => {
+  (req, res, next) => {
     res.body = 'Hello Mith'
+    next()
   }
 )
 

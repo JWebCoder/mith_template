@@ -6,7 +6,7 @@ import {
   mithCors
 } from './deps.ts'
 import { rootRouter } from './routes/root.ts'
-import { apiLogger } from './apiLogger.ts'
+import { apiLogger } from './utils/apiLogger.ts'
 
 const logger = debug('template:server')
 
