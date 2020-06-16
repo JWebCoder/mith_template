@@ -26,6 +26,7 @@ rootRouter.use(
   '/',
   (req, res, next) => {
     res.body = 'Hello Mith'
+    console.log('test')
     next()
   }
 )

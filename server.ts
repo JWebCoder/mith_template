@@ -22,8 +22,9 @@ app.use(serveStatic(resolve(Deno.cwd(), 'static'), '/static', {
 app.use(rootRouter.getRoutes())
 app.use((req, res, next) => {
   if (!req.requestHandled) {
-    next({status: 404, message:'not found'})
+    return next({status: 404, message:'not found'})
   }
+  next()
 })
 
 logger('Setting after stack')

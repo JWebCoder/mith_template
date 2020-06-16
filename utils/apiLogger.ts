@@ -1,4 +1,4 @@
-import { debug, Request, Response, NextFunction } from './deps.ts'
+import { debug, Request, Response, NextFunction } from '../deps.ts'
 
 const logger = debug('template:api-logger')
 
