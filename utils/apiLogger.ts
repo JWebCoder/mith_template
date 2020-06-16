@@ -1,8 +1,8 @@
-import { debug, Request, Response, NextFunction } from '../deps.ts'
+import { debug, IRequest, IResponse, NextFunction } from '../deps.ts'
 
 const logger = debug('template:api-logger')
 
-export const apiLogger = async (req: Request, res: Response, next: NextFunction) => {
+export const apiLogger = async (req: IRequest, res: IResponse, next: NextFunction) => {
   logger('Request - %s - %s', req.serverRequest.url, req.serverRequest.method)
   const body = await req.body()
   if (body) {
