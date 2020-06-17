@@ -3,7 +3,8 @@ import {
   Mith,
   serveStatic,
   resolve,
-  mithCors
+  mithCors,
+  cookieSession
 } from './deps.ts'
 import { rootRouter } from './routes/root.ts'
 import { apiLogger } from './utils/apiLogger.ts'
@@ -14,6 +15,9 @@ const app = new Mith()
 
 logger('Setting before stack')
 app.before(mithCors()); // Enable CORS for All Routes
+app.before(cookieSession({
+  secret:'stuff',
+}))
 
 logger('Setting main stack')
 app.use(serveStatic(resolve(Deno.cwd(), 'static'), '/static', {

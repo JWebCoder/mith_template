@@ -1,5 +1,7 @@
 import { Router } from '../deps.ts'
 import userController from '../controllers/users.ts'
+import { authenticator } from '../utils/authSetup.ts'
+import { Authenticator } from '../utils/authenticator.ts'
 
 const rootRouter = new Router()
 
@@ -19,6 +21,30 @@ rootRouter.use(
     res.body = userController.getUsers()
     next()
   }
+)
+
+rootRouter.use(
+  'GET',
+  '/login',
+  [
+    authenticator.login('local'),
+    (req, res, next) => {
+      res.body = 'it worked'
+      next()
+    }
+  ]
+)
+
+rootRouter.use(
+  'GET',
+  '/me',
+  [
+    authenticator.isAuth,
+    (req, res, next) => {
+      res.body = Authenticator.deserialize(req.session.user)
+      next()
+    }
+  ]
 )
 
 rootRouter.use(
