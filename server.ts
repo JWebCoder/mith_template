@@ -32,7 +32,14 @@ app.use((req, res, next) => {
 })
 
 logger('Setting after stack')
-app.after(apiLogger)
+app.after(apiLogger(
+  [
+    '/login'
+  ],
+  [
+    '/me'
+  ]
+))
 
 logger('Setting error stack')
 app.error(

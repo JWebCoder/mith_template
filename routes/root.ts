@@ -29,7 +29,7 @@ rootRouter.use(
   [
     authenticator.login('local'),
     (req, res, next) => {
-      res.body = 'it worked'
+      res.body = 'welcome'
       next()
     }
   ]
@@ -40,8 +40,8 @@ rootRouter.use(
   '/me',
   [
     authenticator.isAuth,
-    (req, res, next) => {
-      res.body = Authenticator.deserialize(req.session.user)
+    async (req, res, next) => {
+      res.body = await Authenticator.deserialize(req.session.user)
       next()
     }
   ]

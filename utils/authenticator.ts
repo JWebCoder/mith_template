@@ -1,5 +1,5 @@
-import { debug, IRequest, IResponse, NextFunction } from '../deps.ts'
-
+import { IRequest, IResponse, NextFunction } from '../deps.ts'
+import { httpErrors } from './createHttpError.ts'
 export interface IAuther {
   login: (req: IRequest, res: IResponse, next: NextFunction) => Promise<any>
 }
@@ -58,8 +58,8 @@ export class Authenticator {
    */
   login(name: string) {
     return async (req: IRequest, res: IResponse, next: NextFunction) => {
-      if (!this.strategies[name]) {
-        next(new Error(`Strategy ${name} not loaded`))
+      if (!this.strategies[name] || this.strategies[name].enabled === false) {
+        return next(new httpErrors.MethodNotAllowed(`Strategy ${name} not loaded`))
       }
       this.strategies[name].strategy.login(req, res, next).then(
         (user: any) => {
@@ -72,6 +72,9 @@ export class Authenticator {
         }
       ).catch(
         (error: any) => {
+          if (!error.status) {
+            return next(new httpErrors.BadGateway(error))
+          }
           next(error)
         }
       )
@@ -88,7 +91,7 @@ export class Authenticator {
     if (req.session?.user) {
       return next()
     }
-    next(new Error('User not authenticated'))
+    next(new httpErrors.Forbidden('User not authenticated'))
   }
 
   static serialize(user: any) {
