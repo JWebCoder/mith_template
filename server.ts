@@ -8,17 +8,32 @@ import {
 } from './deps.ts'
 import { rootRouter } from './routes/root.ts'
 import { apiLogger } from './utils/apiLogger.ts'
+import { httpErrors } from './utils/createHttpError.ts'
 
 const logger = debug('template:server')
-
+const { env } = Deno
+/**
+ * Initialise the Mith framework
+ */
 const app = new Mith()
 
+/**
+ * Setup the "before" stack
+ * - cors
+ * - session module
+ */
 logger('Setting before stack')
 app.before(mithCors()); // Enable CORS for All Routes
 app.before(cookieSession({
   secret:'stuff',
 }))
 
+/**
+ * Setup the "main" stack
+ * - static file server
+ * - main router
+ * - request not handled middleware
+ */
 logger('Setting main stack')
 app.use(serveStatic(resolve(Deno.cwd(), 'static'), '/static', {
   maxage: 120,
@@ -26,11 +41,15 @@ app.use(serveStatic(resolve(Deno.cwd(), 'static'), '/static', {
 app.use(rootRouter.getRoutes())
 app.use((req, res, next) => {
   if (!req.requestHandled) {
-    return next({status: 404, message:'not found'})
+    return next(new httpErrors.NotFound('not found'))
   }
   next()
 })
 
+/**
+ * Setup the "after" stack
+ * - logger for all the api request
+ */
 logger('Setting after stack')
 app.after(apiLogger(
   [
@@ -41,12 +60,18 @@ app.after(apiLogger(
   ]
 ))
 
+/**
+ * Setup the "error" stack
+ * - error handler middleware
+ */
 logger('Setting error stack')
 app.error(
   (req, res, next) => {
     if (res.error) {
       res.status = res.error.status || 500
-      res.body = res.error.message
+      res.body = env.get('ENV') === 'production'
+        ? 'error'
+        : res.error.message
     }
     next()
   }
