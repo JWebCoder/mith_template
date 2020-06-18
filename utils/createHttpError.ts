@@ -1,4 +1,4 @@
-import { Status, STATUS_TEXT } from "../deps.ts";
+import { Status, STATUS_TEXT } from '../deps.ts'
 
 type ErrorStatus =
   | Status.BadRequest
@@ -48,26 +48,26 @@ export class HttpError extends Error {
    * they represent errors in the request, while 5XX errors are set to `false`
    * as they are internal server errors and exposing details could leak
    * important server security information. */
-  expose = false;
+  expose = false
 
   /** The HTTP error status associated with this class of error. */
-  status = Status.InternalServerError;
+  status = Status.InternalServerError
 }
 
 function createHttpErrorConstructor<E extends typeof HttpError>(
   status: ErrorStatus,
 ): E {
-  const name = `${Status[status]}Error`;
+  const name = `${Status[status]}Error`
   const Ctor = class extends HttpError {
     constructor(message?: string) {
-      super();
-      this.message = message || STATUS_TEXT.get(status)!;
-      this.status = status;
-      this.expose = status >= 400 && status < 500 ? true : false;
+      super()
+      this.message = message || STATUS_TEXT.get(status)!
+      this.status = status
+      this.expose = status >= 400 && status < 500 ? true : false
       this.name = name
     }
-  };
-  return Ctor as E;
+  }
+  return Ctor as E
 }
 
 /** An object which contains an individual HTTP Error for each HTTP status
@@ -76,12 +76,12 @@ function createHttpErrorConstructor<E extends typeof HttpError>(
  * object.  Also, context's `.throw()` will throw errors based on the passed
  * status code. */
 export const httpErrors: Record<keyof typeof Status, typeof HttpError> =
-  {} as any;
+  {} as any
 
 for (const [key, value] of Object.entries(Status)) {
   httpErrors[key as keyof typeof Status] = createHttpErrorConstructor(
     value as ErrorStatus,
-  );
+  )
 }
 
 /** Create a specific class of `HttpError` based on the status, which defaults
@@ -91,9 +91,9 @@ export function createHttpError(
   status: ErrorStatus = 500,
   message?: string,
 ): HttpError {
-  return new httpErrors[Status[status] as keyof typeof Status](message);
+  return new httpErrors[Status[status] as keyof typeof Status](message)
 }
 
 export function isHttpError(value: any): value is HttpError {
-  return value instanceof HttpError;
+  return value instanceof HttpError
 }
