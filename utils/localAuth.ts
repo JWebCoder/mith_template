@@ -1,4 +1,4 @@
-import { debug, IRequest, IResponse, NextFunction } from '../deps.ts'
+import { IRequest, IResponse, NextFunction } from '../deps.ts'
 import { IAuther, Authenticator } from  './authenticator.ts'
 
 type verifier = (username: string, password: string) => Promise<any>

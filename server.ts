@@ -10,8 +10,8 @@ import { rootRouter } from './routes/root.ts'
 import { apiLogger } from './utils/apiLogger.ts'
 import { httpErrors } from './utils/createHttpError.ts'
 
-const logger = debug('template:server')
 const { env } = Deno
+const logger = debug(`${env.get('PROJECT_NAME')}:server`)
 /**
  * Initialise the Mith framework
  */

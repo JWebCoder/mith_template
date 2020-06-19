@@ -1,3 +1,4 @@
+import 'https://deno.land/x/dotenv@v0.4.3/load.ts'
 export { default as debug } from 'https://deno.land/x/debuglog@345a3c55de4fc0c48bef9e94e81dbd18ac699730/debug.ts'
 export { Mith, Request, Response, NextFunction, IRequest, IResponse } from  'https://deno.land/x/mith@v0.8.4/mod.ts'
 export { cookieSession } from  'https://deno.land/x/mith@v0.8.4/cookieSession.ts'

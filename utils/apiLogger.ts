@@ -1,6 +1,7 @@
 import { debug, IRequest, IResponse, NextFunction } from '../deps.ts'
 
-const logger = debug('template:api-logger')
+const { env } = Deno
+const logger = debug(`${env.get('PROJECT_NAME')}:api-logger`)
 
 export const apiLogger = (hiddenRequests: string[] = [], hiddenReponses: string[] = [],) => {
   return async (req: IRequest, res: IResponse, next: NextFunction) => {
