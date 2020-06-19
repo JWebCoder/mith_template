@@ -44,7 +44,7 @@ type ErrorStatus =
 /** A base class for individual classes of HTTP errors. */
 export class HttpError extends Error {
   /** Determines if details about the error should be automatically exposed
-   * in a response.  This is automatically set to `true` for 4XX errors, as
+   * in a response. This is automatically set to `true` for 4XX errors, as
    * they represent errors in the request, while 5XX errors are set to `false`
    * as they are internal server errors and exposing details could leak
    * important server security information. */
@@ -59,7 +59,7 @@ function createHttpErrorConstructor<E extends typeof HttpError>(
 ): E {
   const name = `${Status[status]}Error`
   const Ctor = class extends HttpError {
-    constructor(message?: string) {
+    constructor(message?: string, expose?: boolean) {
       super()
       this.message = message || STATUS_TEXT.get(status)!
       this.status = status
@@ -73,8 +73,8 @@ function createHttpErrorConstructor<E extends typeof HttpError>(
 /** An object which contains an individual HTTP Error for each HTTP status
  * error code (4XX and 5XX).  When errors are raised related to a particular
  * HTTP status code, they will be of the appropriate instance located on this
- * object.  Also, context's `.throw()` will throw errors based on the passed
- * status code. */
+ * object.
+ */
 export const httpErrors: Record<keyof typeof Status, typeof HttpError> =
   {} as any
 
@@ -85,12 +85,21 @@ for (const [key, value] of Object.entries(Status)) {
 }
 
 /** Create a specific class of `HttpError` based on the status, which defaults
- * to _500 Internal Server Error_.
+ * to "500 Internal Server Error".
  */
-export function createHttpError(
-  status: ErrorStatus = 500,
-  message?: string,
-): HttpError {
+export function createHttpError(): HttpError
+export function createHttpError(message: string): HttpError
+export function createHttpError(status: number): HttpError
+export function createHttpError(arg1?: number | string, arg2?: string): HttpError {
+  let status = 500
+  let message = arg2
+  if (arg1) {
+    if (typeof arg1 === 'string') {
+      message = arg1
+    } else {
+      status = arg1
+    }
+  }
   return new httpErrors[Status[status] as keyof typeof Status](message)
 }
 

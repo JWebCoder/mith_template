@@ -8,7 +8,7 @@ import {
 } from './deps.ts'
 import { rootRouter } from './routes/root.ts'
 import { apiLogger } from './utils/apiLogger.ts'
-import { httpErrors } from './utils/createHttpError.ts'
+import { httpErrors, HttpError } from './utils/createHttpError.ts'
 
 const { env } = Deno
 const logger = debug(`${env.get('PROJECT_NAME')}:server`)
@@ -67,12 +67,21 @@ app.after(apiLogger(
 logger('Setting error stack')
 app.error(
   (req, res, next) => {
-    if (res.error) {
-      res.status = res.error.status || 500
-      res.body = env.get('ENV') === 'production'
+    const error = res.error
+    if (error) {
+      if (error instanceof HttpError) {
+        res.status = error.status
+        res.body = error.expose
+          ? error.message
+          : 'error'
+      } else {
+        res.status = error.status || 500
+        res.body = env.get('ENV') === 'production'
         ? 'error'
-        : res.error.message
+        : error.message
+      }
     }
+    
     next()
   }
 )
