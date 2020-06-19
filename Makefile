@@ -4,4 +4,10 @@ run:
 setup:
 	deno run --allow-read="." --allow-write="." --unstable setup.ts
 
-.PHONY: run test setup
+install:
+	deno cache --reload --lock=lock.json deps.ts
+
+lock:
+	deno cache deps.ts --lock lock.json --lock-write
+
+.PHONY: run setup install lock
