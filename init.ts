@@ -1,10 +1,13 @@
-import app from './server.ts'
+import './preChecks.ts'
+import { env } from './utils/envLoader.ts'
+import { App } from './server.ts'
 import { debug } from './deps.ts'
 
-const { env } = Deno
-const logger = debug(`${env.get('PROJECT_NAME')}:init`)
+const logger = debug(`${env.PROJECT_NAME}:init`)
 
-const PORT = Number(env.get('PORT')) || 8000
+const PORT = Number(env.PORT) || 8000
 
+const app = new App()
+app.init()
 app.listen({ port: PORT})
 logger('listening on %s', PORT)
